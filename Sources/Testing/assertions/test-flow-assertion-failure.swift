@@ -1,24 +1,33 @@
 import Foundation
 
-public struct TestFlowAssertionFailure: Error, Sendable, LocalizedError, CustomStringConvertible, TestFlowDiagnosticProviding {
+public struct TestFlowAssertionFailure:
+    Error,
+    Sendable,
+    LocalizedError,
+    CustomStringConvertible,
+    TestFlowDiagnosticProviding
+{
     public var label: String
     public var message: String
     public var actual: String?
     public var expected: String?
     public var diagnostics: [TestFlowDiagnostic]
+    public var sourceLocation: TestSourceLocation?
 
     public init(
         label: String,
         message: String,
         actual: String? = nil,
         expected: String? = nil,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestFlowDiagnostic] = [],
+        sourceLocation: TestSourceLocation? = nil
     ) {
         self.label = label
         self.message = message
         self.actual = actual
         self.expected = expected
         self.diagnostics = diagnostics
+        self.sourceLocation = sourceLocation
     }
 
     public var errorDescription: String? {
@@ -27,8 +36,19 @@ public struct TestFlowAssertionFailure: Error, Sendable, LocalizedError, CustomS
 
     public var testFlowDiagnostics: [TestFlowDiagnostic] {
         var out: [TestFlowDiagnostic] = [
-            .message("\(label): \(message)")
+            .message(
+                "\(label): \(message)"
+            )
         ]
+
+        if let sourceLocation {
+            out.append(
+                .field(
+                    "source",
+                    sourceLocation.description
+                )
+            )
+        }
 
         if let expected {
             out.append(
