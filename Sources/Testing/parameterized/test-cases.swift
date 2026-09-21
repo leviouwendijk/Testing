@@ -9,9 +9,20 @@ public struct TestCases<Value: Sendable>: Sendable {
         name: @escaping @Sendable (Value) -> String = {
             String(describing: $0)
         },
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (TestContext, Value) async throws -> Void
     ) {
+        let sourceLocation = sourceLocation ?? TestSourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
+
         self.suite = TestSuite(
             id,
             title: title,
@@ -43,7 +54,11 @@ public struct TestCases<Value: Sendable>: Sendable {
         name: @escaping @Sendable (Value) -> String = {
             String(describing: $0)
         },
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (TestContext, Value) async throws -> Void
     ) -> TestSuite {
         Self(
@@ -53,6 +68,10 @@ public struct TestCases<Value: Sendable>: Sendable {
             values: values,
             name: name,
             sourceLocation: sourceLocation,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column,
             operation: operation
         ).suite
     }

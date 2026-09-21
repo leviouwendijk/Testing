@@ -9,6 +9,10 @@ let package = Package(
             name: "Testing",
             targets: ["Testing"]
         ),
+        .executable(
+            name: "ttest",
+            targets: ["ttest"]
+        ),
     ],
     dependencies: [
         .package(
@@ -24,6 +28,12 @@ let package = Package(
                     name: "Atomos",
                     package: "Atomos"
                 ),
+            ]
+        ),
+        .executableTarget(
+            name: "ttest",
+            dependencies: [
+                "Testing",
             ]
         ),
     ],

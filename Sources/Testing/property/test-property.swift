@@ -58,9 +58,19 @@ public struct TestProperty: Sendable {
         title: String? = nil,
         tags: Set<String> = [],
         configuration: Configuration = .standard,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (TestContext, Iteration) async throws -> Void
     ) {
+        let sourceLocation = sourceLocation ?? TestSourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
         let iterations = Self.generatedIterations(
             configuration: configuration
         )
@@ -114,7 +124,11 @@ public struct TestProperty: Sendable {
         tags: Set<String> = [],
         iterations: Int,
         seed: UInt64 = 0x54455354494E47,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (TestContext, Iteration) async throws -> Void
     ) {
         self.init(
@@ -126,6 +140,10 @@ public struct TestProperty: Sendable {
                 seed: seed
             ),
             sourceLocation: sourceLocation,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column,
             operation: operation
         )
     }
@@ -136,7 +154,11 @@ public struct TestProperty: Sendable {
         tags: Set<String> = [],
         iterations: Int = 100,
         seed: UInt64 = 0x54455354494E47,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (TestContext, Iteration) async throws -> Void
     ) -> TestSuite {
         Self(
@@ -148,6 +170,10 @@ public struct TestProperty: Sendable {
                 seed: seed
             ),
             sourceLocation: sourceLocation,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column,
             operation: operation
         ).suite
     }
@@ -158,7 +184,11 @@ public struct TestProperty: Sendable {
         tags: Set<String> = [],
         iterations: Int = 100,
         seed: UInt64 = 0x54455354494E47,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (inout TestRandom) throws -> Void
     ) -> TestSuite {
         Self.make(
@@ -167,7 +197,11 @@ public struct TestProperty: Sendable {
             tags: tags,
             iterations: iterations,
             seed: seed,
-            sourceLocation: sourceLocation
+            sourceLocation: sourceLocation,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
         ) { _, iteration in
             var random = iteration.random()
             try operation(

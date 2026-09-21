@@ -149,9 +149,20 @@ public struct TestBenchmark: Sendable {
         title: String? = nil,
         tags: Set<String> = [],
         configuration: Configuration = .standard,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable () async throws -> Void
     ) {
+        let sourceLocation = sourceLocation ?? TestSourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
+
         self.test = Test(
             id,
             title: title,
@@ -179,9 +190,20 @@ public struct TestBenchmark: Sendable {
         title: String? = nil,
         tags: Set<String> = [],
         configuration: Configuration = .standard,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         sync operation: @escaping @Sendable () throws -> Void
     ) {
+        let sourceLocation = sourceLocation ?? TestSourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
+
         self.test = Test(
             id,
             title: title,

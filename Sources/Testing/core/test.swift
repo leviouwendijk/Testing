@@ -17,7 +17,11 @@ public struct Test:
         tags: Set<String> = [],
         skip: String? = nil,
         expectedFailure: String? = nil,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable (TestContext) async throws -> Void
     ) {
         self.id = id
@@ -25,7 +29,12 @@ public struct Test:
         self.tags = tags
         self.skipReason = skip
         self.expectedFailure = expectedFailure
-        self.sourceLocation = sourceLocation
+        self.sourceLocation = sourceLocation ?? TestSourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
         self.operation = operation
     }
 
@@ -35,7 +44,11 @@ public struct Test:
         tags: Set<String> = [],
         skip: String? = nil,
         expectedFailure: String? = nil,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column,
         operation: @escaping @Sendable () async throws -> Void
     ) {
         self.init(
@@ -44,7 +57,11 @@ public struct Test:
             tags: tags,
             skip: skip,
             expectedFailure: expectedFailure,
-            sourceLocation: sourceLocation
+            sourceLocation: sourceLocation,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
         ) { _ in
             try await operation()
         }
@@ -58,8 +75,19 @@ public struct Test:
 public extension Test {
     init(
         _ flow: TestFlow,
-        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column)
+        sourceLocation: TestSourceLocation? = nil,
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column
     ) {
+        let sourceLocation = sourceLocation ?? TestSourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
+
         self.init(
             flow.id,
             title: flow.title,
