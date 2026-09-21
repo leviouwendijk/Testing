@@ -9,7 +9,7 @@ public struct TestCases<Value: Sendable>: Sendable {
         name: @escaping @Sendable (Value) -> String = {
             String(describing: $0)
         },
-        sourceLocation: TestSourceLocation = .init(),
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
         operation: @escaping @Sendable (TestContext, Value) async throws -> Void
     ) {
         self.suite = TestSuite(
@@ -43,7 +43,7 @@ public struct TestCases<Value: Sendable>: Sendable {
         name: @escaping @Sendable (Value) -> String = {
             String(describing: $0)
         },
-        sourceLocation: TestSourceLocation = .init(),
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
         operation: @escaping @Sendable (TestContext, Value) async throws -> Void
     ) -> TestSuite {
         Self(

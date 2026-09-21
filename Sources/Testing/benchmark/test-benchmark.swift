@@ -149,7 +149,7 @@ public struct TestBenchmark: Sendable {
         title: String? = nil,
         tags: Set<String> = [],
         configuration: Configuration = .standard,
-        sourceLocation: TestSourceLocation = .init(),
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
         operation: @escaping @Sendable () async throws -> Void
     ) {
         self.test = Test(
@@ -179,7 +179,7 @@ public struct TestBenchmark: Sendable {
         title: String? = nil,
         tags: Set<String> = [],
         configuration: Configuration = .standard,
-        sourceLocation: TestSourceLocation = .init(),
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
         sync operation: @escaping @Sendable () throws -> Void
     ) {
         self.test = Test(

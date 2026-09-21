@@ -17,7 +17,7 @@ public struct Test:
         tags: Set<String> = [],
         skip: String? = nil,
         expectedFailure: String? = nil,
-        sourceLocation: TestSourceLocation = .init(),
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
         operation: @escaping @Sendable (TestContext) async throws -> Void
     ) {
         self.id = id
@@ -35,7 +35,7 @@ public struct Test:
         tags: Set<String> = [],
         skip: String? = nil,
         expectedFailure: String? = nil,
-        sourceLocation: TestSourceLocation = .init(),
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column),
         operation: @escaping @Sendable () async throws -> Void
     ) {
         self.init(
@@ -58,7 +58,7 @@ public struct Test:
 public extension Test {
     init(
         _ flow: TestFlow,
-        sourceLocation: TestSourceLocation = .init()
+        sourceLocation: TestSourceLocation = TestSourceLocation(fileID: #fileID, filePath: #filePath, line: #line, column: #column)
     ) {
         self.init(
             flow.id,
