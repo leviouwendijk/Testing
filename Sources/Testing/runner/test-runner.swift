@@ -1,3 +1,4 @@
+import Foundation
 import Atomos
 
 public enum TestRunner {
