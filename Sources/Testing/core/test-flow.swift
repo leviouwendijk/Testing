@@ -34,7 +34,7 @@ public struct TestFlow: Sendable, Identifiable {
             } catch {
                 return .failed(
                     name: id,
-                    diagnostics: TestFlowErrorDiagnostics.diagnostics(
+                    diagnostics: TestErrorDiagnostics.diagnostics(
                         for: error
                     )
                 )
@@ -48,7 +48,7 @@ public struct TestFlow: Sendable, Identifiable {
         tags: Set<String> = [],
         skip: String? = nil,
         expectedFailure: String? = nil,
-        operation: @escaping @Sendable () async throws -> [TestFlowDiagnostic]
+        operation: @escaping @Sendable () async throws -> [TestDiagnostic]
     ) {
         self.init(
             id: id,

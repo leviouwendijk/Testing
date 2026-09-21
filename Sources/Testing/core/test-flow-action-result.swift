@@ -6,7 +6,7 @@ public struct TestFlowActionResult: Sendable, Hashable {
     public var status: TestFlowStatus
     public var startedAt: Date
     public var endedAt: Date
-    public var diagnostics: [TestFlowDiagnostic]
+    public var diagnostics: [TestDiagnostic]
 
     public init(
         name: String,
@@ -14,7 +14,7 @@ public struct TestFlowActionResult: Sendable, Hashable {
         status: TestFlowStatus,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) {
         self.name = name
         self.kind = kind
@@ -39,7 +39,7 @@ public extension TestFlowActionResult {
         kind: TestFlowActionKind,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .init(
             name: name,
@@ -56,7 +56,7 @@ public extension TestFlowActionResult {
         kind: TestFlowActionKind,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .init(
             name: name,
@@ -73,7 +73,7 @@ public extension TestFlowActionResult {
         kind: TestFlowActionKind,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .init(
             name: name,
@@ -90,7 +90,7 @@ public extension TestFlowActionResult {
         kind: TestFlowActionKind,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .init(
             name: name,
@@ -107,7 +107,7 @@ public extension TestFlowActionResult {
         kind: TestFlowActionKind,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .init(
             name: name,
@@ -124,7 +124,7 @@ public extension TestFlowActionResult {
         kind: TestFlowActionKind,
         startedAt: Date = Date(),
         endedAt: Date = Date(),
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .init(
             name: name,

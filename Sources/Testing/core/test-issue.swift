@@ -22,7 +22,7 @@ public struct TestIssue:
     public let sourceLocation: TestSourceLocation
     public let actual: String?
     public let expected: String?
-    public let diagnostics: [TestFlowDiagnostic]
+    public let diagnostics: [TestDiagnostic]
 
     public init(
         kind: TestIssueKind,
@@ -30,7 +30,7 @@ public struct TestIssue:
         sourceLocation: TestSourceLocation,
         actual: String? = nil,
         expected: String? = nil,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) {
         self.kind = kind
         self.message = message

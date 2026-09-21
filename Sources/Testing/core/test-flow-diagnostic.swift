@@ -1,4 +1,4 @@
-public enum TestFlowDiagnostic: Sendable, Hashable, ExpressibleByStringInterpolation, CustomStringConvertible {
+public enum TestDiagnostic: Sendable, Hashable, ExpressibleByStringInterpolation, CustomStringConvertible {
     case message(String)
     case field(String, String)
     case section(String, [String])
@@ -260,7 +260,7 @@ public struct TestFlowCommandDiagnostic: Sendable, Hashable, CustomStringConvert
     }
 }
 
-public extension TestFlowDiagnostic {
+public extension TestDiagnostic {
     static func value<T>(
         _ name: String,
         _ value: T
@@ -326,3 +326,6 @@ public extension TestFlowSecurityFinding {
         )
     }
 }
+
+@available(*, deprecated, renamed: "TestDiagnostic")
+public typealias TestFlowDiagnostic = TestDiagnostic

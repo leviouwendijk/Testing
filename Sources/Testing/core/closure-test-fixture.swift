@@ -18,12 +18,12 @@ public struct ClosureTestFixture<Handle: TestFixtureHandle>:
 public actor ClosureTestFixtureHandle:
     TestFixtureHandle
 {
-    private let diagnosticsOperation: @Sendable () async -> [TestFlowDiagnostic]
+    private let diagnosticsOperation: @Sendable () async -> [TestDiagnostic]
     private let teardownOperation: @Sendable () async throws -> Void
     private var didTeardown: Bool
 
     public init(
-        diagnostics: @escaping @Sendable () async -> [TestFlowDiagnostic] = { [] },
+        diagnostics: @escaping @Sendable () async -> [TestDiagnostic] = { [] },
         teardown: @escaping @Sendable () async throws -> Void
     ) {
         self.diagnosticsOperation = diagnostics
@@ -31,7 +31,7 @@ public actor ClosureTestFixtureHandle:
         self.didTeardown = false
     }
 
-    public func diagnostics() async -> [TestFlowDiagnostic] {
+    public func diagnostics() async -> [TestDiagnostic] {
         await diagnosticsOperation()
     }
 

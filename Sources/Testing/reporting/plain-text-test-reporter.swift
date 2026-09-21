@@ -64,6 +64,13 @@ public actor PlainTextTestReporter:
                 )
             }
 
+        case .metric_recorded(let metric, let test):
+            if verbose {
+                outputLines.append(
+                    "    metric \(test.path): \(metric.description)"
+                )
+            }
+
         case .test_finished(let result):
             outputLines.append(
                 "[\(label(result.outcome))] \(result.test.path) \(formatDuration(result.duration))"

@@ -3,24 +3,29 @@ public struct TestRecording:
     Hashable
 {
     public let issues: [TestIssue]
-    public let diagnostics: [TestFlowDiagnostic]
+    public let diagnostics: [TestDiagnostic]
+    public let metrics: [TestMetric]
 
     public init(
         issues: [TestIssue] = [],
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = [],
+        metrics: [TestMetric] = []
     ) {
         self.issues = issues
         self.diagnostics = diagnostics
+        self.metrics = metrics
     }
 }
 
 public actor TestRecorder {
     private var issues: [TestIssue]
-    private var diagnostics: [TestFlowDiagnostic]
+    private var diagnostics: [TestDiagnostic]
+    private var metrics: [TestMetric]
 
     public init() {
         self.issues = []
         self.diagnostics = []
+        self.metrics = []
     }
 
     public func record(
@@ -30,13 +35,19 @@ public actor TestRecorder {
     }
 
     public func record(
-        _ diagnostic: TestFlowDiagnostic
+        _ diagnostic: TestDiagnostic
     ) {
         diagnostics.append(diagnostic)
     }
 
     public func record(
-        contentsOf diagnostics: [TestFlowDiagnostic]
+        _ metric: TestMetric
+    ) {
+        metrics.append(metric)
+    }
+
+    public func record(
+        contentsOf diagnostics: [TestDiagnostic]
     ) {
         self.diagnostics.append(
             contentsOf: diagnostics
@@ -46,7 +57,8 @@ public actor TestRecorder {
     public func snapshot() -> TestRecording {
         .init(
             issues: issues,
-            diagnostics: diagnostics
+            diagnostics: diagnostics,
+            metrics: metrics
         )
     }
 }

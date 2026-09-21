@@ -169,7 +169,7 @@ public struct TestFlowSecurityFinding: Sendable, Codable, Hashable {
     }
 }
 
-public struct TestFlowSecuritySignal: Error, Sendable, TestFlowDiagnosticProviding {
+public struct TestFlowSecuritySignal: Error, Sendable, TestDiagnosticProviding {
     public var finding: TestFlowSecurityFinding
 
     public init(
@@ -182,7 +182,7 @@ public struct TestFlowSecuritySignal: Error, Sendable, TestFlowDiagnosticProvidi
         finding.status
     }
 
-    public var testFlowDiagnostics: [TestFlowDiagnostic] {
+    public var testDiagnostics: [TestDiagnostic] {
         [
             .security(finding)
         ]

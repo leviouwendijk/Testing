@@ -1,34 +1,75 @@
 public struct TestContext: Sendable {
     private let recorder: TestRecorder
+    private let test: TestDescriptor?
+    private let sink: any TestEventSink
 
     public init() {
         self.recorder = .init()
+        self.test = nil
+        self.sink = NullTestEventSink()
     }
 
     init(
-        recorder: TestRecorder
+        recorder: TestRecorder,
+        test: TestDescriptor,
+        sink: any TestEventSink
     ) {
         self.recorder = recorder
+        self.test = test
+        self.sink = sink
     }
 
     public func record(
         _ issue: TestIssue
     ) async {
         await recorder.record(issue)
+
+        if let test {
+            await sink.receive(
+                .issue_recorded(
+                    issue,
+                    test: test
+                )
+            )
+        }
     }
 
     public func record(
-        _ diagnostic: TestFlowDiagnostic
+        _ diagnostic: TestDiagnostic
     ) async {
         await recorder.record(diagnostic)
+
+        if let test {
+            await sink.receive(
+                .diagnostic_recorded(
+                    diagnostic,
+                    test: test
+                )
+            )
+        }
     }
 
     public func record(
-        contentsOf diagnostics: [TestFlowDiagnostic]
+        _ metric: TestMetric
     ) async {
-        await recorder.record(
-            contentsOf: diagnostics
-        )
+        await recorder.record(metric)
+
+        if let test {
+            await sink.receive(
+                .metric_recorded(
+                    metric,
+                    test: test
+                )
+            )
+        }
+    }
+
+    public func record(
+        contentsOf diagnostics: [TestDiagnostic]
+    ) async {
+        for diagnostic in diagnostics {
+            await record(diagnostic)
+        }
     }
 
     public func expect(
@@ -43,7 +84,7 @@ public struct TestContext: Sendable {
             return
         }
 
-        await recorder.record(
+        await record(
             TestIssue(
                 kind: .expectation,
                 message: message,
@@ -72,7 +113,7 @@ public struct TestContext: Sendable {
             return
         }
 
-        await recorder.record(
+        await record(
             TestIssue(
                 kind: .expectation,
                 message: message,

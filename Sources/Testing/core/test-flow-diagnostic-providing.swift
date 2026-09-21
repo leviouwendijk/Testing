@@ -1,17 +1,30 @@
-public protocol TestFlowDiagnosticProviding: Error {
-    var testFlowDiagnostics: [TestFlowDiagnostic] { get }
+public protocol TestDiagnosticProviding: Error {
+    var testDiagnostics: [TestDiagnostic] { get }
 }
 
-public enum TestFlowErrorDiagnostics {
+public enum TestErrorDiagnostics {
     public static func diagnostics(
         for error: Error
-    ) -> [TestFlowDiagnostic] {
-        if let error = error as? any TestFlowDiagnosticProviding {
-            return error.testFlowDiagnostics
+    ) -> [TestDiagnostic] {
+        if let error = error as? any TestDiagnosticProviding {
+            return error.testDiagnostics
         }
 
         return [
             .message("\(error)")
         ]
+    }
+}
+
+@available(*, deprecated, renamed: "TestDiagnosticProviding")
+public typealias TestFlowDiagnosticProviding = TestDiagnosticProviding
+
+@available(*, deprecated, renamed: "TestErrorDiagnostics")
+public typealias TestFlowErrorDiagnostics = TestErrorDiagnostics
+
+public extension TestDiagnosticProviding {
+    @available(*, deprecated, renamed: "testDiagnostics")
+    var testFlowDiagnostics: [TestDiagnostic] {
+        testDiagnostics
     }
 }

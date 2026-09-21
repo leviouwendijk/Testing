@@ -12,18 +12,18 @@ public struct TestFixtureFailure:
     Error,
     Sendable,
     CustomStringConvertible,
-    TestFlowDiagnosticProviding
+    TestDiagnosticProviding
 {
     public let phase: TestFixturePhase
-    public let primaryDiagnostics: [TestFlowDiagnostic]
-    public let fixtureDiagnostics: [TestFlowDiagnostic]
-    public let teardownDiagnostics: [TestFlowDiagnostic]
+    public let primaryDiagnostics: [TestDiagnostic]
+    public let fixtureDiagnostics: [TestDiagnostic]
+    public let teardownDiagnostics: [TestDiagnostic]
 
     public init(
         phase: TestFixturePhase,
-        primaryDiagnostics: [TestFlowDiagnostic],
-        fixtureDiagnostics: [TestFlowDiagnostic] = [],
-        teardownDiagnostics: [TestFlowDiagnostic] = []
+        primaryDiagnostics: [TestDiagnostic],
+        fixtureDiagnostics: [TestDiagnostic] = [],
+        teardownDiagnostics: [TestDiagnostic] = []
     ) {
         self.phase = phase
         self.primaryDiagnostics = primaryDiagnostics
@@ -31,8 +31,8 @@ public struct TestFixtureFailure:
         self.teardownDiagnostics = teardownDiagnostics
     }
 
-    public var testFlowDiagnostics: [TestFlowDiagnostic] {
-        var diagnostics: [TestFlowDiagnostic] = [
+    public var testDiagnostics: [TestDiagnostic] {
+        var diagnostics: [TestDiagnostic] = [
             .field(
                 "fixture_phase",
                 phase.rawValue
@@ -65,7 +65,7 @@ public struct TestFixtureFailure:
     }
 
     public var description: String {
-        testFlowDiagnostics
+        testDiagnostics
             .map(\.description)
             .joined(
                 separator: "\n"

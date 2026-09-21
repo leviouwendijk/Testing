@@ -18,7 +18,7 @@ where
     } catch {
         let operationError = error
 
-        var teardownDiagnostics: [TestFlowDiagnostic] = []
+        var teardownDiagnostics: [TestDiagnostic] = []
 
         let cleanupDisposition: TestFixtureFailureCleanupDisposition
 
@@ -30,7 +30,7 @@ where
             }
         } catch {
             cleanupDisposition = .report
-            teardownDiagnostics = TestFlowErrorDiagnostics.diagnostics(
+            teardownDiagnostics = TestErrorDiagnostics.diagnostics(
                 for: error
             )
         }
@@ -47,7 +47,7 @@ where
 
         throw TestFixtureFailure(
             phase: .operation,
-            primaryDiagnostics: TestFlowErrorDiagnostics.diagnostics(
+            primaryDiagnostics: TestErrorDiagnostics.diagnostics(
                 for: operationError
             ),
             fixtureDiagnostics: fixtureDiagnostics,
@@ -64,7 +64,7 @@ where
 
         throw TestFixtureFailure(
             phase: .teardown,
-            primaryDiagnostics: TestFlowErrorDiagnostics.diagnostics(
+            primaryDiagnostics: TestErrorDiagnostics.diagnostics(
                 for: error
             ),
             fixtureDiagnostics: fixtureDiagnostics

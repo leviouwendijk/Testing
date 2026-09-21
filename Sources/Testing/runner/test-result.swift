@@ -36,7 +36,8 @@ public struct TestResult:
     public let endedAt: Date
     public let duration: MonotonicClock.Duration
     public let issues: [TestIssue]
-    public let diagnostics: [TestFlowDiagnostic]
+    public let diagnostics: [TestDiagnostic]
+    public let metrics: [TestMetric]
 
     public init(
         test: TestDescriptor,
@@ -45,7 +46,8 @@ public struct TestResult:
         endedAt: Date,
         duration: MonotonicClock.Duration? = nil,
         issues: [TestIssue] = [],
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = [],
+        metrics: [TestMetric] = []
     ) {
         self.test = test
         self.outcome = outcome
@@ -59,6 +61,7 @@ public struct TestResult:
             )
         self.issues = issues
         self.diagnostics = diagnostics
+        self.metrics = metrics
     }
 
     public var wallClockDuration: TimeInterval {

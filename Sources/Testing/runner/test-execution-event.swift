@@ -10,7 +10,11 @@ public enum TestExecutionEvent: Sendable {
         test: TestDescriptor
     )
     case diagnostic_recorded(
-        TestFlowDiagnostic,
+        TestDiagnostic,
+        test: TestDescriptor
+    )
+    case metric_recorded(
+        TestMetric,
         test: TestDescriptor
     )
     case test_finished(TestResult)

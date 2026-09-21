@@ -244,16 +244,18 @@ private extension TestRunner {
         let startedAt = Date()
         let recorder = TestRecorder()
         let context = TestContext(
-            recorder: recorder
+            recorder: recorder,
+            test: descriptor,
+            sink: sink
         )
 
         var outcome: TestOutcome = .passed
-        var immediateDiagnostics: [TestFlowDiagnostic] = []
+        var generatedDiagnostics: [TestDiagnostic] = []
 
         if let skipReason = inheritedSkipReason
             ?? test.skipReason {
             outcome = .skipped
-            immediateDiagnostics = [
+            generatedDiagnostics = [
                 .field(
                     "reason",
                     skipReason
@@ -264,13 +266,13 @@ private extension TestRunner {
                 try await test.operation(context)
             } catch let skip as TestFlowSkip {
                 outcome = .skipped
-                immediateDiagnostics = skip.testFlowDiagnostics
+                generatedDiagnostics = skip.testDiagnostics
             } catch let requirement as TestRequirementFailure {
-                await recorder.record(
+                await context.record(
                     requirement.issue
                 )
             } catch let assertion as TestFlowAssertionFailure {
-                await recorder.record(
+                await context.record(
                     TestIssue(
                         kind: .expectation,
                         message: "\(assertion.label): \(assertion.message)",
@@ -282,14 +284,14 @@ private extension TestRunner {
                     )
                 )
             } catch {
-                await recorder.record(
+                await context.record(
                     TestIssue(
                         kind: .error,
                         message: String(
                             describing: error
                         ),
                         sourceLocation: test.sourceLocation,
-                        diagnostics: TestFlowErrorDiagnostics.diagnostics(
+                        diagnostics: TestErrorDiagnostics.diagnostics(
                             for: error
                         )
                     )
@@ -304,14 +306,11 @@ private extension TestRunner {
             outcome = .failed
         }
 
-        var diagnostics = immediateDiagnostics
-            + recording.diagnostics
-
         if let expectedFailure = test.expectedFailure {
             switch outcome {
             case .failed:
                 outcome = .expected_failure
-                diagnostics.append(
+                generatedDiagnostics.append(
                     .field(
                         "expected_failure",
                         expectedFailure
@@ -320,7 +319,7 @@ private extension TestRunner {
 
             case .passed:
                 outcome = .unexpected_pass
-                diagnostics.append(
+                generatedDiagnostics.append(
                     .field(
                         "expected_failure",
                         expectedFailure
@@ -335,6 +334,15 @@ private extension TestRunner {
             }
         }
 
+        for diagnostic in generatedDiagnostics {
+            await sink.receive(
+                .diagnostic_recorded(
+                    diagnostic,
+                    test: descriptor
+                )
+            )
+        }
+
         let result = TestResult(
             test: descriptor,
             outcome: outcome,
@@ -344,26 +352,10 @@ private extension TestRunner {
                 to: clock.now
             ),
             issues: recording.issues,
-            diagnostics: diagnostics
+            diagnostics: recording.diagnostics
+                + generatedDiagnostics,
+            metrics: recording.metrics
         )
-
-        for issue in recording.issues {
-            await sink.receive(
-                .issue_recorded(
-                    issue,
-                    test: descriptor
-                )
-            )
-        }
-
-        for diagnostic in diagnostics {
-            await sink.receive(
-                .diagnostic_recorded(
-                    diagnostic,
-                    test: descriptor
-                )
-            )
-        }
 
         await sink.receive(
             .test_finished(result)

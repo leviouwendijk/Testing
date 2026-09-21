@@ -2,7 +2,7 @@ public struct TestRequirementFailure:
     Error,
     Sendable,
     CustomStringConvertible,
-    TestFlowDiagnosticProviding
+    TestDiagnosticProviding
 {
     public let issue: TestIssue
 
@@ -12,8 +12,8 @@ public struct TestRequirementFailure:
         self.issue = issue
     }
 
-    public var testFlowDiagnostics: [TestFlowDiagnostic] {
-        var diagnostics: [TestFlowDiagnostic] = [
+    public var testDiagnostics: [TestDiagnostic] {
+        var diagnostics: [TestDiagnostic] = [
             .message(issue.message),
             .field(
                 "source",

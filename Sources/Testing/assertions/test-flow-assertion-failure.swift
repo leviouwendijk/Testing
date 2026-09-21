@@ -5,13 +5,13 @@ public struct TestFlowAssertionFailure:
     Sendable,
     LocalizedError,
     CustomStringConvertible,
-    TestFlowDiagnosticProviding
+    TestDiagnosticProviding
 {
     public var label: String
     public var message: String
     public var actual: String?
     public var expected: String?
-    public var diagnostics: [TestFlowDiagnostic]
+    public var diagnostics: [TestDiagnostic]
     public var sourceLocation: TestSourceLocation?
 
     public init(
@@ -19,7 +19,7 @@ public struct TestFlowAssertionFailure:
         message: String,
         actual: String? = nil,
         expected: String? = nil,
-        diagnostics: [TestFlowDiagnostic] = [],
+        diagnostics: [TestDiagnostic] = [],
         sourceLocation: TestSourceLocation? = nil
     ) {
         self.label = label
@@ -34,8 +34,8 @@ public struct TestFlowAssertionFailure:
         description
     }
 
-    public var testFlowDiagnostics: [TestFlowDiagnostic] {
-        var out: [TestFlowDiagnostic] = [
+    public var testDiagnostics: [TestDiagnostic] {
+        var out: [TestDiagnostic] = [
             .message(
                 "\(label): \(message)"
             )
@@ -76,7 +76,7 @@ public struct TestFlowAssertionFailure:
     }
 
     public var description: String {
-        testFlowDiagnostics
+        testDiagnostics
             .map(\.description)
             .joined(
                 separator: "\n"

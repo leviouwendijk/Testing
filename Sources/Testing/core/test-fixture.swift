@@ -13,7 +13,7 @@ public protocol TestFixtureHandle: Sendable {
     ///
     /// Diagnostics must remain available after teardown so callers can include
     /// terminal fixture state in a failed test result.
-    func diagnostics() async -> [TestFlowDiagnostic]
+    func diagnostics() async -> [TestDiagnostic]
 
     /// Release the fixture and all resources owned by it.
     ///

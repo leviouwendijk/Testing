@@ -1,12 +1,12 @@
 import Foundation
 
-public struct TestFlowSkip: Error, Sendable, LocalizedError, CustomStringConvertible, TestFlowDiagnosticProviding {
+public struct TestFlowSkip: Error, Sendable, LocalizedError, CustomStringConvertible, TestDiagnosticProviding {
     public var reason: String
-    public var diagnostics: [TestFlowDiagnostic]
+    public var diagnostics: [TestDiagnostic]
 
     public init(
         _ reason: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) {
         self.reason = reason
         self.diagnostics = diagnostics
@@ -16,7 +16,7 @@ public struct TestFlowSkip: Error, Sendable, LocalizedError, CustomStringConvert
         description
     }
 
-    public var testFlowDiagnostics: [TestFlowDiagnostic] {
+    public var testDiagnostics: [TestDiagnostic] {
         [
             .field(
                 "reason",
@@ -34,7 +34,7 @@ public extension TestFlowSkip {
     static func when(
         _ condition: Bool,
         _ reason: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) throws {
         if condition {
             throw Self(
@@ -47,7 +47,7 @@ public extension TestFlowSkip {
     static func unless(
         _ condition: Bool,
         _ reason: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) throws {
         if !condition {
             throw Self(
@@ -61,7 +61,7 @@ public extension TestFlowSkip {
 public extension TestFlowResult {
     func markSkipped(
         reason: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         var copy = self
         copy.status = .skipped
@@ -80,7 +80,7 @@ public extension TestFlowResult {
 
     func markExpectedFailure(
         reason: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         guard status != .skipped else {
             return self

@@ -7,7 +7,7 @@ public struct TestFlowResult: Sendable, Hashable {
     public var startedAt: Date
     public var endedAt: Date
     public var tags: Set<String>
-    public var diagnostics: [TestFlowDiagnostic]
+    public var diagnostics: [TestDiagnostic]
     public var steps: [TestFlowActionResult]
 
     public init(
@@ -17,7 +17,7 @@ public struct TestFlowResult: Sendable, Hashable {
         startedAt: Date = Date(),
         endedAt: Date = Date(),
         tags: Set<String> = [],
-        diagnostics: [TestFlowDiagnostic] = [],
+        diagnostics: [TestDiagnostic] = [],
         steps: [TestFlowActionResult] = []
     ) {
         self.name = name
@@ -46,7 +46,7 @@ public extension TestFlowResult {
         startedAt: Date = Date(),
         endedAt: Date = Date(),
         tags: Set<String> = [],
-        diagnostics: [TestFlowDiagnostic] = [],
+        diagnostics: [TestDiagnostic] = [],
         steps: [TestFlowActionResult] = []
     ) -> Self {
         .init(
@@ -67,7 +67,7 @@ public extension TestFlowResult {
         startedAt: Date = Date(),
         endedAt: Date = Date(),
         tags: Set<String> = [],
-        diagnostics: [TestFlowDiagnostic] = [],
+        diagnostics: [TestDiagnostic] = [],
         steps: [TestFlowActionResult] = []
     ) -> Self {
         .init(
@@ -89,7 +89,7 @@ public extension TestFlowResult {
         startedAt: Date = Date(),
         endedAt: Date = Date(),
         tags: Set<String> = [],
-        diagnostics: [TestFlowDiagnostic] = [],
+        diagnostics: [TestDiagnostic] = [],
         steps: [TestFlowActionResult] = []
     ) -> Self {
         .init(
@@ -111,7 +111,7 @@ public extension TestFlowResult {
 
     static func pass(
         _ name: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .passed(
             name: name,
@@ -121,7 +121,7 @@ public extension TestFlowResult {
 
     static func fail(
         _ name: String,
-        diagnostics: [TestFlowDiagnostic] = []
+        diagnostics: [TestDiagnostic] = []
     ) -> Self {
         .failed(
             name: name,

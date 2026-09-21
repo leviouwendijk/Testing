@@ -325,45 +325,52 @@ private extension TestBenchmark {
         in context: TestContext
     ) async {
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.minimum",
-                summary.minimum.description
+                value: Double(summary.minimum.nanoseconds),
+                unit: .nanoseconds
             )
         )
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.mean",
-                summary.mean.description
+                value: Double(summary.mean.nanoseconds),
+                unit: .nanoseconds
             )
         )
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.median",
-                summary.median.description
+                value: Double(summary.median.nanoseconds),
+                unit: .nanoseconds
             )
         )
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.p90",
-                summary.p90.description
+                value: Double(summary.p90.nanoseconds),
+                unit: .nanoseconds
             )
         )
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.p95",
-                summary.p95.description
+                value: Double(summary.p95.nanoseconds),
+                unit: .nanoseconds
             )
         )
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.p99",
-                summary.p99.description
+                value: Double(summary.p99.nanoseconds),
+                unit: .nanoseconds
             )
         )
         await context.record(
-            .field(
+            TestMetric(
                 "benchmark.maximum",
-                summary.maximum.description
+                value: Double(summary.maximum.nanoseconds),
+                unit: .nanoseconds
             )
         )
     }
