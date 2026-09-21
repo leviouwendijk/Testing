@@ -1,4 +1,4 @@
-import Foundation
+import Atomos
 
 public struct TestFlowResult: Sendable, Hashable {
     public var name: String

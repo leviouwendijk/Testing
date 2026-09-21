@@ -10,9 +10,21 @@ let package = Package(
             targets: ["Testing"]
         ),
     ],
+    dependencies: [
+        .package(
+            url: "https://github.com/leviouwendijk/Atomos.git",
+            branch: "master"
+        ),
+    ],
     targets: [
         .target(
-            name: "Testing"
+            name: "Testing",
+            dependencies: [
+                .product(
+                    name: "Atomos",
+                    package: "Atomos"
+                ),
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]

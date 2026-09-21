@@ -23,6 +23,24 @@ public enum TestNodeBuilder {
         [.suite(expression)]
     }
 
+    public static func buildExpression<Value: Sendable>(
+        _ expression: TestCases<Value>
+    ) -> [TestNode] {
+        [.suite(expression.suite)]
+    }
+
+    public static func buildExpression(
+        _ expression: TestProperty
+    ) -> [TestNode] {
+        [.suite(expression.suite)]
+    }
+
+    public static func buildExpression(
+        _ expression: TestBenchmark
+    ) -> [TestNode] {
+        [.test(expression.test)]
+    }
+
     public static func buildExpression(
         _ expression: TestNode
     ) -> [TestNode] {
@@ -67,17 +85,20 @@ public struct TestSuite:
     public let id: String
     public let title: String
     public let tags: Set<String>
+    public let skipReason: String?
     public let children: [TestNode]
 
     public init(
         _ id: String,
         title: String? = nil,
         tags: Set<String> = [],
+        skip: String? = nil,
         children: [TestNode]
     ) {
         self.id = id
         self.title = title ?? id
         self.tags = tags
+        self.skipReason = skip
         self.children = children
     }
 
@@ -85,12 +106,14 @@ public struct TestSuite:
         _ id: String,
         title: String? = nil,
         tags: Set<String> = [],
+        skip: String? = nil,
         @TestNodeBuilder children: () -> [TestNode]
     ) {
         self.init(
             id,
             title: title,
             tags: tags,
+            skip: skip,
             children: children()
         )
     }
@@ -110,6 +133,61 @@ public struct TestSuite:
                 )
             }
         )
+    }
+}
+
+public extension TestSuite {
+    func named(
+        _ title: String
+    ) -> Self {
+        .init(
+            id,
+            title: title,
+            tags: tags,
+            skip: skipReason,
+            children: children
+        )
+    }
+
+    func tagged(
+        _ tags: String...
+    ) -> Self {
+        tagged(
+            Set(tags)
+        )
+    }
+
+    func tagged(
+        _ additionalTags: Set<String>
+    ) -> Self {
+        .init(
+            id,
+            title: title,
+            tags: tags.union(additionalTags),
+            skip: skipReason,
+            children: children
+        )
+    }
+
+    func skipped(
+        _ reason: String
+    ) -> Self {
+        .init(
+            id,
+            title: title,
+            tags: tags,
+            skip: reason,
+            children: children
+        )
+    }
+
+    func disabled(
+        when condition: Bool,
+        reason: String
+    ) -> Self {
+        condition
+            ? skipped(reason)
+            : self
     }
 }
 

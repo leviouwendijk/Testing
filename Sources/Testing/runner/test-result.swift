@@ -1,4 +1,4 @@
-import Foundation
+import Atomos
 
 public struct TestDescriptor:
     Sendable,
@@ -33,6 +33,7 @@ public struct TestResult:
     public let outcome: TestOutcome
     public let startedAt: Date
     public let endedAt: Date
+    public let duration: MonotonicClock.Duration
     public let issues: [TestIssue]
     public let diagnostics: [TestFlowDiagnostic]
 
@@ -41,6 +42,7 @@ public struct TestResult:
         outcome: TestOutcome,
         startedAt: Date,
         endedAt: Date,
+        duration: MonotonicClock.Duration? = nil,
         issues: [TestIssue] = [],
         diagnostics: [TestFlowDiagnostic] = []
     ) {
@@ -48,11 +50,17 @@ public struct TestResult:
         self.outcome = outcome
         self.startedAt = startedAt
         self.endedAt = endedAt
+        self.duration = duration
+            ?? .init(
+                seconds: endedAt.timeIntervalSince(
+                    startedAt
+                )
+            )
         self.issues = issues
         self.diagnostics = diagnostics
     }
 
-    public var duration: TimeInterval {
+    public var wallClockDuration: TimeInterval {
         endedAt.timeIntervalSince(startedAt)
     }
 
@@ -68,21 +76,29 @@ public struct TestRunResult:
     public let title: String
     public let startedAt: Date
     public let endedAt: Date
+    public let duration: MonotonicClock.Duration
     public let results: [TestResult]
 
     public init(
         title: String,
         startedAt: Date,
         endedAt: Date,
+        duration: MonotonicClock.Duration? = nil,
         results: [TestResult]
     ) {
         self.title = title
         self.startedAt = startedAt
         self.endedAt = endedAt
+        self.duration = duration
+            ?? .init(
+                seconds: endedAt.timeIntervalSince(
+                    startedAt
+                )
+            )
         self.results = results
     }
 
-    public var duration: TimeInterval {
+    public var wallClockDuration: TimeInterval {
         endedAt.timeIntervalSince(startedAt)
     }
 

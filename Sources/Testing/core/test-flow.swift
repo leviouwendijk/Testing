@@ -1,4 +1,4 @@
-import Foundation
+import Atomos
 
 public struct TestFlow: Sendable, Identifiable {
     public let id: String

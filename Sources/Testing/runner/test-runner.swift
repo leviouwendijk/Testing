@@ -1,11 +1,13 @@
-import Foundation
+import Atomos
 
 public enum TestRunner {
     public static func run(
         _ suite: TestSuite,
-        configuration: TestRunConfiguration = .init(),
+        configuration: TestRunConfiguration = .default,
         sink: any TestEventSink = NullTestEventSink()
     ) async -> TestRunResult {
+        let clock = MonotonicClock()
+        let monotonicStartedAt = clock.now
         let startedAt = Date()
         let totalTests = selectedTestCount(
             in: suite,
@@ -24,6 +26,7 @@ public enum TestRunner {
         let output = await runSuite(
             suite,
             inheritedTags: [],
+            inheritedSkipReason: nil,
             parentPath: [],
             configuration: configuration,
             sink: sink
@@ -33,6 +36,9 @@ public enum TestRunner {
             title: suite.title,
             startedAt: startedAt,
             endedAt: Date(),
+            duration: monotonicStartedAt.duration(
+                to: clock.now
+            ),
             results: output.results
         )
 
@@ -98,6 +104,7 @@ private extension TestRunner {
     static func runSuite(
         _ suite: TestSuite,
         inheritedTags: Set<String>,
+        inheritedSkipReason: String?,
         parentPath: [String],
         configuration: TestRunConfiguration,
         sink: any TestEventSink
@@ -105,6 +112,8 @@ private extension TestRunner {
         let suiteTags = inheritedTags.union(
             suite.tags
         )
+        let effectiveSkipReason = inheritedSkipReason
+            ?? suite.skipReason
         let suitePathComponents = parentPath + [
             suite.id
         ]
@@ -165,6 +174,7 @@ private extension TestRunner {
                     test,
                     path: path,
                     tags: tags,
+                    inheritedSkipReason: effectiveSkipReason,
                     sink: sink
                 )
 
@@ -179,6 +189,7 @@ private extension TestRunner {
                 let nestedOutput = await runSuite(
                     nested,
                     inheritedTags: suiteTags,
+                    inheritedSkipReason: effectiveSkipReason,
                     parentPath: suitePathComponents,
                     configuration: configuration,
                     sink: sink
@@ -212,6 +223,7 @@ private extension TestRunner {
         _ test: Test,
         path: String,
         tags: Set<String>,
+        inheritedSkipReason: String?,
         sink: any TestEventSink
     ) async -> TestResult {
         let descriptor = TestDescriptor(
@@ -226,6 +238,8 @@ private extension TestRunner {
             .test_started(descriptor)
         )
 
+        let clock = MonotonicClock()
+        let monotonicStartedAt = clock.now
         let startedAt = Date()
         let recorder = TestRecorder()
         let context = TestContext(
@@ -235,7 +249,8 @@ private extension TestRunner {
         var outcome: TestOutcome = .passed
         var immediateDiagnostics: [TestFlowDiagnostic] = []
 
-        if let skipReason = test.skipReason {
+        if let skipReason = inheritedSkipReason
+            ?? test.skipReason {
             outcome = .skipped
             immediateDiagnostics = [
                 .field(
@@ -324,6 +339,9 @@ private extension TestRunner {
             outcome: outcome,
             startedAt: startedAt,
             endedAt: Date(),
+            duration: monotonicStartedAt.duration(
+                to: clock.now
+            ),
             issues: recording.issues,
             diagnostics: diagnostics
         )

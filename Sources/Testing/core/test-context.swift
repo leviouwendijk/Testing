@@ -1,8 +1,12 @@
 public struct TestContext: Sendable {
-    public let recorder: TestRecorder
+    private let recorder: TestRecorder
 
-    public init(
-        recorder: TestRecorder = .init()
+    public init() {
+        self.recorder = .init()
+    }
+
+    init(
+        recorder: TestRecorder
     ) {
         self.recorder = recorder
     }
@@ -88,6 +92,26 @@ public struct TestContext: Sendable {
         )
     }
 
+    public func expect<Value: Equatable>(
+        _ actual: Value,
+        equals expected: Value,
+        _ message: String = "values were not equal",
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column
+    ) async {
+        await expectEqual(
+            actual,
+            expected,
+            message,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
+    }
+
     public func require(
         _ condition: @autoclosure () -> Bool,
         _ message: String = "required condition was false",
@@ -143,5 +167,25 @@ public struct TestContext: Sendable {
                 )
             )
         }
+    }
+
+    public func require<Value: Equatable>(
+        _ actual: Value,
+        equals expected: Value,
+        _ message: String = "required values were not equal",
+        fileID: String = #fileID,
+        filePath: String = #filePath,
+        line: UInt = #line,
+        column: UInt = #column
+    ) throws {
+        try requireEqual(
+            actual,
+            expected,
+            message,
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
     }
 }

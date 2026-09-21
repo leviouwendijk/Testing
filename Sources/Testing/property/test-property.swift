@@ -1,51 +1,77 @@
-public struct TestPropertyIteration:
-    Sendable,
-    Hashable
-{
-    public let index: Int
-    public let seed: UInt64
+public struct TestProperty: Sendable {
+    public struct Configuration:
+        Sendable,
+        Hashable
+    {
+        public let iterations: Int
+        public let seed: UInt64
 
-    public init(
-        index: Int,
-        seed: UInt64
-    ) {
-        self.index = index
-        self.seed = seed
-    }
+        public init(
+            iterations: Int = 100,
+            seed: UInt64 = 0x54455354494E47
+        ) {
+            precondition(
+                iterations > 0
+            )
 
-    public func random() -> TestRandom {
-        .init(
-            seed: seed
+            self.iterations = iterations
+            self.seed = seed
+        }
+
+        public static let quick = Self(
+            iterations: 32
+        )
+
+        public static let standard = Self()
+
+        public static let exhaustive = Self(
+            iterations: 1_024
         )
     }
-}
 
-public enum TestProperty {
-    public static func make(
+    public struct Iteration:
+        Sendable,
+        Hashable
+    {
+        public let index: Int
+        public let seed: UInt64
+
+        public init(
+            index: Int,
+            seed: UInt64
+        ) {
+            self.index = index
+            self.seed = seed
+        }
+
+        public func random() -> TestRandom {
+            .init(
+                seed: seed
+            )
+        }
+    }
+
+    public let suite: TestSuite
+
+    public init(
         _ id: String,
         title: String? = nil,
         tags: Set<String> = [],
-        iterations: Int = 100,
-        seed: UInt64 = 0x54455354494E47,
+        configuration: Configuration = .standard,
         sourceLocation: TestSourceLocation = .init(),
-        operation: @escaping @Sendable (TestContext, TestPropertyIteration) async throws -> Void
-    ) -> TestSuite {
-        precondition(
-            iterations > 0
+        operation: @escaping @Sendable (TestContext, Iteration) async throws -> Void
+    ) {
+        let iterations = Self.generatedIterations(
+            configuration: configuration
         )
 
-        let cases = generatedIterations(
-            count: iterations,
-            seed: seed
-        )
-
-        return TestSuite(
+        self.suite = TestSuite(
             id,
             title: title,
             tags: tags.union(
                 Set(["property"])
             ),
-            children: cases.map { iteration in
+            children: iterations.map { iteration in
                 .test(
                     Test(
                         "iteration-\(iteration.index)",
@@ -55,31 +81,71 @@ public enum TestProperty {
                         ],
                         sourceLocation: sourceLocation
                     ) { context in
-                        do {
-                            try await operation(
-                                context,
-                                iteration
+                        await context.record(
+                            .field(
+                                "property_seed",
+                                String(iteration.seed)
                             )
-                        } catch {
-                            await context.record(
-                                .field(
-                                    "property_seed",
-                                    String(iteration.seed)
-                                )
+                        )
+                        await context.record(
+                            .field(
+                                "property_iteration",
+                                String(iteration.index)
                             )
-                            await context.record(
-                                .field(
-                                    "property_iteration",
-                                    String(iteration.index)
-                                )
-                            )
+                        )
 
-                            throw error
-                        }
+                        try await operation(
+                            context,
+                            iteration
+                        )
                     }
                 )
             }
         )
+    }
+
+    public init(
+        _ id: String,
+        title: String? = nil,
+        tags: Set<String> = [],
+        iterations: Int,
+        seed: UInt64 = 0x54455354494E47,
+        sourceLocation: TestSourceLocation = .init(),
+        operation: @escaping @Sendable (TestContext, Iteration) async throws -> Void
+    ) {
+        self.init(
+            id,
+            title: title,
+            tags: tags,
+            configuration: .init(
+                iterations: iterations,
+                seed: seed
+            ),
+            sourceLocation: sourceLocation,
+            operation: operation
+        )
+    }
+
+    public static func make(
+        _ id: String,
+        title: String? = nil,
+        tags: Set<String> = [],
+        iterations: Int = 100,
+        seed: UInt64 = 0x54455354494E47,
+        sourceLocation: TestSourceLocation = .init(),
+        operation: @escaping @Sendable (TestContext, Iteration) async throws -> Void
+    ) -> TestSuite {
+        Self(
+            id,
+            title: title,
+            tags: tags,
+            configuration: .init(
+                iterations: iterations,
+                seed: seed
+            ),
+            sourceLocation: sourceLocation,
+            operation: operation
+        ).suite
     }
 
     public static func makeSynchronous(
@@ -91,7 +157,7 @@ public enum TestProperty {
         sourceLocation: TestSourceLocation = .init(),
         operation: @escaping @Sendable (inout TestRandom) throws -> Void
     ) -> TestSuite {
-        make(
+        Self.make(
             id,
             title: title,
             tags: tags,
@@ -107,18 +173,22 @@ public enum TestProperty {
     }
 }
 
+public typealias TestPropertyConfiguration = TestProperty.Configuration
+public typealias TestPropertyIteration = TestProperty.Iteration
+
 private extension TestProperty {
     static func generatedIterations(
-        count: Int,
-        seed: UInt64
-    ) -> [TestPropertyIteration] {
+        configuration: Configuration
+    ) -> [Iteration] {
         var random = TestRandom(
-            seed: seed
+            seed: configuration.seed
         )
-        var iterations: [TestPropertyIteration] = []
-        iterations.reserveCapacity(count)
+        var iterations: [Iteration] = []
+        iterations.reserveCapacity(
+            configuration.iterations
+        )
 
-        for index in 0..<count {
+        for index in 0..<configuration.iterations {
             iterations.append(
                 .init(
                     index: index,

@@ -1,4 +1,4 @@
-import Foundation
+import Atomos
 
 public actor PlainTextTestReporter:
     TestEventSink
@@ -131,11 +131,25 @@ private extension PlainTextTestReporter {
     }
 
     func formatDuration(
-        _ duration: TimeInterval
+        _ duration: MonotonicClock.Duration
     ) -> String {
-        String(
-            format: "%.3fms",
-            duration * 1_000
-        )
+        let negative = duration.nanoseconds < 0
+        let magnitude = duration.nanoseconds.magnitude
+        let wholeMilliseconds = magnitude / 1_000_000
+        let fractionalMicroseconds = (
+            magnitude % 1_000_000
+        ) / 1_000
+
+        let fraction: String
+
+        if fractionalMicroseconds < 10 {
+            fraction = "00\(fractionalMicroseconds)"
+        } else if fractionalMicroseconds < 100 {
+            fraction = "0\(fractionalMicroseconds)"
+        } else {
+            fraction = String(fractionalMicroseconds)
+        }
+
+        return "\(negative ? "-" : "")\(wholeMilliseconds).\(fraction)ms"
     }
 }

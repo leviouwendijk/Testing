@@ -1,17 +1,23 @@
-public enum TestCases {
-    public static func make<Value: Sendable>(
+public struct TestCases<Value: Sendable>: Sendable {
+    public let suite: TestSuite
+
+    public init(
         _ id: String,
         title: String? = nil,
         tags: Set<String> = [],
         values: [Value],
-        name: @escaping @Sendable (Value) -> String,
+        name: @escaping @Sendable (Value) -> String = {
+            String(describing: $0)
+        },
         sourceLocation: TestSourceLocation = .init(),
         operation: @escaping @Sendable (TestContext, Value) async throws -> Void
-    ) -> TestSuite {
-        TestSuite(
+    ) {
+        self.suite = TestSuite(
             id,
             title: title,
-            tags: tags,
+            tags: tags.union(
+                Set(["cases"])
+            ),
             children: values.enumerated().map { index, value in
                 .test(
                     Test(
@@ -27,5 +33,27 @@ public enum TestCases {
                 )
             }
         )
+    }
+
+    public static func make(
+        _ id: String,
+        title: String? = nil,
+        tags: Set<String> = [],
+        values: [Value],
+        name: @escaping @Sendable (Value) -> String = {
+            String(describing: $0)
+        },
+        sourceLocation: TestSourceLocation = .init(),
+        operation: @escaping @Sendable (TestContext, Value) async throws -> Void
+    ) -> TestSuite {
+        Self(
+            id,
+            title: title,
+            tags: tags,
+            values: values,
+            name: name,
+            sourceLocation: sourceLocation,
+            operation: operation
+        ).suite
     }
 }
