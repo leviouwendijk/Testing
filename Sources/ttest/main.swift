@@ -62,7 +62,6 @@ private actor CaptureSink: TestEventSink {
     }
 }
 
-@main
 private struct TestingCharacterization {
     static func main() async throws {
         try await characterizeSourceLocations()
@@ -71,8 +70,9 @@ private struct TestingCharacterization {
         try await characterizeCompositeSink()
         try await characterizeOutcomesAndFailFast()
         try await characterizeBenchmarkMetrics()
+        try await characterizePlainTextProjectionAndStreaming()
 
-        print("ttest: 6/6 passed")
+        print("ttest: 7/7 passed")
     }
 
     private static func characterizeSourceLocations() async throws {
@@ -553,3 +553,5 @@ private struct TestingCharacterization {
         }
     }
 }
+
+try await TestingCharacterization.main()
