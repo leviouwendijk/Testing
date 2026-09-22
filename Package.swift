@@ -13,6 +13,10 @@ let package = Package(
             name: "ttest",
             targets: ["ttest"]
         ),
+        .executable(
+            name: "tstreamtest",
+            targets: ["tstreamtest"]
+        ),
     ],
     dependencies: [
         .package(
@@ -34,6 +38,16 @@ let package = Package(
             name: "ttest",
             dependencies: [
                 "Testing",
+            ]
+        ),
+        .executableTarget(
+            name: "tstreamtest",
+            dependencies: [
+                "Testing",
+                .product(
+                    name: "Atomos",
+                    package: "Atomos"
+                ),
             ]
         ),
     ],
