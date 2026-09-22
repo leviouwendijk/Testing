@@ -9,13 +9,15 @@ let package = Package(
             name: "Testing",
             targets: ["Testing"]
         ),
+
+        // test executables
         .executable(
-            name: "ttest",
-            targets: ["ttest"]
+            name: "t_tm",
+            targets: ["TestMain"]
         ),
         .executable(
-            name: "tstreamtest",
-            targets: ["tstreamtest"]
+            name: "t_tstream",
+            targets: ["TestStream"]
         ),
     ],
     dependencies: [
@@ -35,20 +37,22 @@ let package = Package(
             ]
         ),
         .executableTarget(
-            name: "ttest",
+            name: "TestMain",
             dependencies: [
                 "Testing",
-            ]
+            ],
+            path: "Sources/TestExecutable/TestMain"
         ),
         .executableTarget(
-            name: "tstreamtest",
+            name: "TestStream",
             dependencies: [
                 "Testing",
                 .product(
                     name: "Atomos",
                     package: "Atomos"
                 ),
-            ]
+            ],
+            path: "Sources/TestExecutable/TestStream"
         ),
     ],
     swiftLanguageModes: [.v6]
